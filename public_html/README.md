@@ -32,7 +32,8 @@ juriscontrol-site/
 1. Copie a pasta `juriscontrol-site` para `C:\xampp\htdocs\`.
 2. Inicie o **Apache** no Painel do XAMPP.
 3. Acesse no navegador:
-http://localhost/juriscontrol-site/index.php
+
+http://localhost/juriscontrol-site/public_html/login.php
 
 4. Utilize o botão **Cadastrar Login** para criar seu primeiro usuário.
 5. Após cadastro, use o login para acessar o sistema.
