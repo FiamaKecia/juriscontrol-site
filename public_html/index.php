@@ -1,44 +1,89 @@
 <?php
-session_start();
+$_SESSION = array();
 
-// Protege a página: redireciona se não estiver logado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit();
+if (!isset($_SESSION)) {
+    session_start();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Início - Sistema Jurídico</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>JurisControl - Sistema Jurídico</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .card {
+            z-index: 1;
+            background-color: #FFF;
+        }
+
+        .center-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+   
+    <script language='JavaScript'>
+        function validarLogin() {
+            let vLogin = document.getElementById("login").value;        
+            let vSenha = document.getElementById("senha").value;
+            
+            $.ajax({
+                url: 'usuarios/login_validar.php',
+                type: 'POST',
+                data: { pLogin: vLogin, pSenha: vSenha },
+                success: function(data) {
+                    const cRetorno = data.replace(/(<([^>]+)>)/ig, '').trim();
+                    if (cRetorno === "0") {
+                        alert("Login inválido!");
+                    } else {
+                        alert("Login validado com sucesso!");
+                        window.location.href = "usuarios/usuario_listar.php";
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Erro na requisição: " + textStatus + " - " + errorThrown);                
+                }
+            });
+        }
+
+        function cadastrarLogin() {
+            window.location.href = "usuarios/usuario_cadastrar.php";        
+        }
+    </script>
 </head>
 <body>
-  <!-- Barra de navegação -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Sistema Jurídico</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="usuarios/usuario_cadastrar.php">Cadastrar Usuário</a></li>
-          <li class="nav-item"><a class="nav-link" href="usuarios/usuario_listar.php">Listar Usuários</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Relatórios</a></li>
-        </ul>
-        <span class="navbar-text me-3">Bem-vindo, <?php echo $_SESSION['nome']; ?></span>
-        <a href="logout.php" class="btn btn-outline-light">Sair</a>
-      </div>
+    <div class="center-container">
+        <div class="card p-4 shadow-lg" style="width: 350px;">
+            <h3 class="text-center mb-3"><img src="imagens/login.jpg" style="width: 75%;" /></h3>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="login" class="form-label">Usuário</label>
+                    <input type="text" class="form-control" id="login" placeholder="Digite seu login" required />
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" placeholder="Digite sua senha" required />
+                </div>
+                <button type="button" class="btn btn-primary w-100" onclick="validarLogin()">Entrar</button>
+                <br><br>
+                <button type="button" class="btn btn-dark w-100" onclick="cadastrarLogin()">Cadastrar Login</button>            
+            </form>
+        </div>
     </div>
-  </nav>
-
-  <!-- Conteúdo principal -->
-  <div class="container mt-5">
-    <div class="text-center">
-      <h2>Sistema de Controle Jurídico</h2>
-      <p class="lead">Use o menu acima para navegar pelo sistema.</p>
-    </div>
-  </div>
 </body>
 </html>

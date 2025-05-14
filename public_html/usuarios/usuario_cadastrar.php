@@ -1,57 +1,73 @@
+<?php
+    include_once '../inc/funcoes.php';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastrar Usuário</title>
+  <title>Cadastro de Usuário</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>        
+</head>
+<script>
+  function sair() {
+    window.location.href = "../index.php";            
+  }
 
-  <script>
-    function salvarUsuario() {
-      let nome = document.getElementById("nome").value;
-      let login = document.getElementById("login").value;
-      let senha = document.getElementById("senha").value;
+  function cadastrarUsuario() {
+    let vNome = document.getElementById("nome").value;
+    let vLogin = document.getElementById("login").value;
+    let vSenha = document.getElementById("senha").value;
 
-      if (nome.trim() === "" || login.trim() === "" || senha.trim() === "") {
-        alert("Todos os campos são obrigatórios!");
-        return;
-      }
-
-      $.ajax({
-        url: "usuarios_salvar.php",
-        type: "POST",
-        data: {
-          nome: nome,
-          login: login,
-          senha: senha
-        },
-        success: function (data) {
-          alert(data);
+    $.ajax({
+      url: 'usuario_incluir.php',
+      type: 'POST',
+      data: { pNome: vNome, pLogin: vLogin , pSenha : vSenha },
+      success: function(data) {
+        const cRetorno = data.replace(/(<([^>]+)>)/ig, '').trim();
+        if (cRetorno === "0") {
+          alert("Erro no cadastro!");
+        } else {
+          alert("Cadastro realizado com sucesso");
           window.location.href = "usuario_listar.php";
         }
-      });
-    }
-  </script>
-</head>
-<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
-  <div class="card p-4 shadow-lg" style="width: 400px;">
-    <h2 class="text-center mb-4">Cadastro de Usuário</h2>
-    <form onsubmit="return false;">
-      <div class="mb-3">
-        <label class="form-label">Nome</label>
-        <input type="text" class="form-control" id="nome" placeholder="Digite o nome completo">
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Erro na requisição: " + textStatus + " - " + errorThrown);                
+      }
+    });
+  }
+</script>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title text-center mb-4">Cadastro de Usuário</h4>
+            <form onsubmit="return false;">
+              <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" required>
+              </div>
+              <div class="mb-3">
+                <label for="login" class="form-label">Login</label>
+                <input type="text" class="form-control" id="login" required>
+              </div>
+              <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" required>
+              </div>
+              <button type="button" class="btn btn-primary w-100" onclick="cadastrarUsuario()">Cadastrar</button>
+              <br><br>
+              <button type="button" class="btn btn-dark w-100" onclick="sair()">Sair</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Login</label>
-        <input type="text" class="form-control" id="login" placeholder="Digite o login desejado">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senha" placeholder="Digite a senha">
-      </div>
-      <button class="btn btn-primary w-100" onclick="salvarUsuario()">Salvar</button>
-    </form>
+    </div>
   </div>
 </body>
 </html>
